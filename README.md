@@ -14,6 +14,7 @@ Tài liệu chi tiết (kiến trúc, mô hình lớp, CSDL, URL, luồng nghi�
 | --- | --- |
 | Ngôn ngữ / build | Java 17+, Maven (đóng gói WAR) |
 | Web | Jakarta Servlet 6, JSP 3.1, JSTL 3 — chạy trên Jetty 12 (`mvn jetty:run`) hoặc Tomcat 10.1+/11 |
+| Triển khai | Docker / Docker Compose (Tomcat 10.1 + Java 21, kèm tuỳ chọn MySQL 8.4) |
 | CSDL | H2 nhúng (chế độ MySQL, mặc định) hoặc MySQL 8; JDBC thuần + HikariCP |
 | Thanh toán | VNPAY API 2.1.0 (HMAC-SHA512) + cổng giả lập để demo |
 | Test | JUnit 5 (domain, DAO trên H2, VNPAY) |
@@ -65,6 +66,25 @@ Muốn cố định cổng, thêm vào phần `<configuration>` của plugin `je
 Khi triển khai lên Tomcat, cổng do Tomcat quyết định (thuộc tính `port` của `<Connector>` trong `conf/server.xml`).
 Không cần sửa gì trong ứng dụng: return URL của VNPAY được ghép từ địa chỉ của request hiện tại.
 
+### Chạy bằng Docker
+
+Chỉ cần cài Docker (Docker Desktop trên Windows/macOS):
+
+```bash
+docker compose up -d --build
+```
+
+Mở http://localhost:8080 — image tự build WAR và chạy trên Tomcat 10.1 + Java 21; dữ liệu H2 và ảnh tải lên nằm
+trong volume `shop-data` nên vẫn còn khi tạo lại container. Cấu hình bằng file `.env` (chép từ `.env.example`), ví dụ
+`APP_PORT=8081` để đổi cổng. Chạy kèm MySQL 8.4:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.mysql.yml up -d --build
+```
+
+Đưa lên máy chủ thật (HTTPS qua Nginx/Caddy, biến môi trường, sao lưu):
+**[docs/11-docker.md](docs/11-docker.md)**.
+
 ### Triển khai lên Tomcat
 
 ```bash
@@ -87,7 +107,8 @@ db.password=your-password
 
 Bảng được tạo tự động từ `src/main/resources/db/schema.sql` (cú pháp chung cho MySQL 8 và H2).
 Mọi khoá trong `app.properties` cũng có thể ghi đè bằng system property `-Dshop.<khoá>=...`,
-ví dụ `mvn jetty:run "-Dshop.order.vnpayTimeoutMinutes=30"` (trong PowerShell nhớ đặt trong dấu nháy).
+ví dụ `mvn jetty:run "-Dshop.order.vnpayTimeoutMinutes=30"` (trong PowerShell nhớ đặt trong dấu nháy),
+hoặc biến môi trường `SHOP_<KHOÁ>` (`db.url` → `SHOP_DB_URL`).
 
 ### VNPAY
 
@@ -173,4 +194,4 @@ khách từ chối nhận hàng, viết đánh giá), test DAO/transaction trên
 - `main` — bản phát hành; `develop` — nhánh tích hợp.
 - Mỗi chức năng phát triển trên một nhánh `feature/*` (domain-model, persistence, web-foundation, auth, address-book,
   catalog, cart, wishlist, checkout, customer-orders, vnpay-payment, reviews, staff-orders, admin-catalog,
-  admin-discounts, admin-users), sửa lỗi trên `fix/*`, rồi merge `--no-ff` vào `develop`.
+  admin-discounts, admin-users, docker), sửa lỗi trên `fix/*`, rồi merge `--no-ff` vào `develop`.
