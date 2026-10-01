@@ -52,7 +52,8 @@
                       </td>
                       <td class="text-right">${f:vnd(o.total)}</td>
                       <td class="small">${o.paymentMethod}
-                        <c:if test="${o.paid}"><span class="badge badge-success">Đã trả</span></c:if></td>
+                        <c:if test="${o.paid}"><span class="badge badge-success">Đã trả</span></c:if>
+                        <c:if test="${o.refunded}"><span class="badge badge-secondary">Đã hoàn tiền</span></c:if></td>
                       <td><span class="badge badge-${o.status.badge}">${o.status.label}</span></td>
                       <td><a href="${ctx}/orders/detail?id=${o.id}" class="btn btn-sm btn-outline-primary">Xem</a></td>
                     </tr>

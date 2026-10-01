@@ -129,6 +129,11 @@ public class Order extends Entity {
         return payments.stream().anyMatch(Payment::isSuccess);
     }
 
+    /** Đã có lần thanh toán được hoàn tiền (huỷ sau khi trả, giao thất bại, trả hàng). */
+    public boolean isRefunded() {
+        return payments.stream().anyMatch(p -> p.getStatus() == PaymentStatus.REFUNDED);
+    }
+
     // ---------------------------------------------------------------- vòng đời
 
     public void confirm(Employee by) {
