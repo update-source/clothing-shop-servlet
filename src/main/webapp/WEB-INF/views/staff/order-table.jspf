@@ -18,6 +18,7 @@
           <td class="small">${o.paymentMethod}
             <c:choose>
               <c:when test="${o.paid}"><span class="badge badge-success">Đã trả</span></c:when>
+              <c:when test="${o.refunded}"><span class="badge badge-secondary">Đã hoàn tiền</span></c:when>
               <c:otherwise><span class="badge badge-light">Chưa trả</span></c:otherwise>
             </c:choose>
           </td>

@@ -105,6 +105,8 @@ class OrderLifecycleTest {
         assertEquals(0, blackM.getReservedQuantity());
         assertEquals(10, blackM.getStockQuantity());
         assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
+        assertTrue(order.isRefunded());
+        assertFalse(order.isPaid());
     }
 
     @Test

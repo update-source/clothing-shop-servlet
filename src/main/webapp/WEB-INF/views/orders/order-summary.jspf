@@ -54,6 +54,7 @@
       <p class="mb-0">
         <c:choose>
           <c:when test="${order.paid}"><span class="badge badge-success">Đã thanh toán</span></c:when>
+          <c:when test="${order.refunded}"><span class="badge badge-secondary">Đã hoàn tiền</span></c:when>
           <c:otherwise><span class="badge badge-warning">Chưa thanh toán</span></c:otherwise>
         </c:choose>
       </p>
