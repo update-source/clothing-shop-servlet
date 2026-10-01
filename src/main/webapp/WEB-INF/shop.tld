@@ -53,4 +53,9 @@
         <function-class>com.shop.web.ElFunctions</function-class>
         <function-signature>java.lang.String url(java.lang.String)</function-signature>
     </function>
+    <function>
+        <name>colorHex</name>
+        <function-class>com.shop.web.ElFunctions</function-class>
+        <function-signature>java.lang.String colorHex(java.lang.String)</function-signature>
+    </function>
 </taglib>

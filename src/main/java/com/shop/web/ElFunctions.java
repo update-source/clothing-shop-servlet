@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 /** Hàm EL dùng trong JSP (khai báo ở WEB-INF/shop.tld, tiền tố "f"). */
 public final class ElFunctions {
@@ -52,6 +53,19 @@ public final class ElFunctions {
 
     public static String rating(double rating) {
         return String.format("%.1f", rating);
+    }
+
+    private static final Map<String, String> COLORS = Map.ofEntries(
+            Map.entry("đen", "#222222"), Map.entry("trắng", "#ffffff"), Map.entry("xám", "#9e9e9e"),
+            Map.entry("be", "#d9c8a9"), Map.entry("đỏ", "#d32f2f"), Map.entry("hồng", "#f48fb1"),
+            Map.entry("vàng", "#fbc02d"), Map.entry("cam", "#fb8c00"), Map.entry("nâu", "#795548"),
+            Map.entry("xanh navy", "#1f2a44"), Map.entry("xanh nhạt", "#a6c8ff"), Map.entry("xanh đậm", "#1b3a6b"),
+            Map.entry("xanh rêu", "#556b2f"), Map.entry("xanh lá", "#43a047"), Map.entry("xanh dương", "#1e88e5"),
+            Map.entry("tím", "#8e24aa"));
+
+    /** Mã màu hiển thị cho tên màu tiếng Việt (mặc định xám nhạt). */
+    public static String colorHex(String color) {
+        return color == null ? "#cccccc" : COLORS.getOrDefault(color.trim().toLowerCase(), "#cccccc");
     }
 
     public static String url(String value) {
