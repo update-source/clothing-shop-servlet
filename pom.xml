@@ -89,6 +89,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <!-- Dùng trong AppConfigTest: cấu hình đọc được từ biến môi trường SHOP_* -->
+                    <environmentVariables>
+                        <SHOP_TEST_FROM_ENV>env-value</SHOP_TEST_FROM_ENV>
+                    </environmentVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
