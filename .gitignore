@@ -26,3 +26,4 @@ src/main/resources/app-local.properties
 
 # Original UI template archive
 shoppers-gh-pages.zip
+.claude/

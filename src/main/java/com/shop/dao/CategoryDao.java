@@ -2,11 +2,13 @@ package com.shop.dao;
 
 import com.shop.model.catalog.Category;
 import com.shop.persistence.Jdbc;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -45,7 +47,8 @@ public class CategoryDao {
     /** Danh sách sắp theo tên đầy đủ (cha › con). */
     public List<Category> findAll() {
         List<Category> list = new ArrayList<>(findAllMap().values());
-        list.sort(Comparator.comparing(Category::getFullName, String.CASE_INSENSITIVE_ORDER));
+        Collator vietnamese = Collator.getInstance(Locale.forLanguageTag("vi-VN"));
+        list.sort(Comparator.comparing(Category::getFullName, vietnamese));
         return list;
     }
 
