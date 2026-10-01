@@ -61,6 +61,7 @@ khi phát hành thì merge `develop` vào `main` và gắn tag.
 | `feature/admin-catalog` | Quản trị danh mục, sản phẩm, ảnh, biến thể, nhập kho |
 | `feature/admin-discounts` | Quản trị khuyến mãi, voucher |
 | `feature/admin-users` | Quản trị tài khoản |
+| `feature/docker` | Cấu hình qua biến môi trường `SHOP_*`, Dockerfile, Docker Compose (H2 / MySQL) |
 | `fix/refund-status-badge` | Hiện "Đã hoàn tiền" cho đơn đã hoàn tiền |
 | `fix/vietnamese-font` | Thay font thiếu dấu tiếng Việt |
 | `fix/empty-address-book-npe` | Lỗi trang thanh toán với khách chưa có địa chỉ |
@@ -76,6 +77,7 @@ Theo [Conventional Commits](https://www.conventionalcommits.org/): `<loại>(<ph
 | `fix` | Sửa lỗi | `fix(persistence): NPE on checkout/address book for customers without a default address` |
 | `test` | Thêm/sửa test | `test(domain): order lifecycle scenarios A, C, D and review scenario E` |
 | `docs` | Tài liệu | `docs: README with run/deploy instructions...` |
+| `build` | Đóng gói, Docker | `build(docker): optional MySQL 8.4 stack (docker-compose.mysql.yml)` |
 | `chore` | Cấu hình, dọn dẹp | `chore: normalize line endings with .gitattributes` |
 
 Mỗi commit là một bước nhỏ, biên dịch được và (nếu có test) chạy test pass.
@@ -87,6 +89,7 @@ Mỗi commit là một bước nhỏ, biên dịch được và (nếu có test)
 | `v1.0.0` | Đầy đủ chức năng theo đặc tả và class diagram v6 |
 | `v1.0.1` | Sửa font tiếng Việt |
 | `v1.0.2` | Sửa lỗi trang thanh toán với khách chưa có địa chỉ |
+| `v1.1.0` | Triển khai bằng Docker |
 
 ## Lệnh thường dùng
 

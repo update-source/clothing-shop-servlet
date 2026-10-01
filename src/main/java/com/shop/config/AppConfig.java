@@ -5,13 +5,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Đọc cấu hình từ {@code app.properties}, ghi đè bởi {@code app-local.properties}
- * và system property {@code shop.<key>}.
+ * Đọc cấu hình từ {@code app.properties}, ghi đè bởi {@code app-local.properties},
+ * biến môi trường {@code SHOP_<KEY>} (dùng khi chạy trong Docker) và system property {@code shop.<key>}.
  */
 public final class AppConfig {
 
@@ -39,8 +40,19 @@ public final class AppConfig {
     }
 
     public static String get(String key) {
-        String value = System.getProperty("shop." + key, PROPS.getProperty(key));
+        String value = System.getProperty("shop." + key);
+        if (value == null) {
+            value = System.getenv(envName(key));
+        }
+        if (value == null) {
+            value = PROPS.getProperty(key);
+        }
         return value == null ? null : expand(value.trim());
+    }
+
+    /** Tên biến môi trường của một khoá: {@code db.url} → {@code SHOP_DB_URL}, {@code db.poolSize} → {@code SHOP_DB_POOLSIZE}. */
+    static String envName(String key) {
+        return "SHOP_" + key.toUpperCase(Locale.ROOT).replace('.', '_');
     }
 
     public static String get(String key, String defaultValue) {

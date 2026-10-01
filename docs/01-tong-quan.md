@@ -35,7 +35,8 @@ Một người vừa là nhân viên vừa muốn mua hàng cần hai tài kho�
 | CSDL | H2 2.2 nhúng (chế độ MySQL) hoặc MySQL 8 | JDBC thuần, pool HikariCP |
 | Giao diện | Template *Shoppers* (Colorlib, CC BY 3.0), Bootstrap 4, jQuery | Việt hoá, font Be Vietnam Pro |
 | Thanh toán | VNPAY API 2.1.0 | Có cổng giả lập (`vnpay.mode=mock`) để demo |
-| Kiểm thử | JUnit 5 | 48 test: domain, DAO trên H2, VNPAY |
+| Kiểm thử | JUnit 5 | 52 test: domain, DAO trên H2, VNPAY, cấu hình |
+| Triển khai | Docker (Tomcat 10.1 + Java 21), Docker Compose | Kèm cấu hình MySQL 8.4 |
 
 ## Cấu trúc mã nguồn
 
@@ -43,6 +44,10 @@ Một người vừa là nhân viên vừa muốn mua hàng cần hai tài kho�
 .
 ├── pom.xml
 ├── README.md
+├── Dockerfile, .dockerignore            # image Tomcat 10.1 + Java 21
+├── docker-compose.yml                   # chạy bằng Docker (H2)
+├── docker-compose.mysql.yml             # bổ sung MySQL 8.4
+├── .env.example                         # mẫu biến cấu hình cho Docker
 ├── docs/                                # tài liệu này
 └── src
     ├── main
@@ -57,7 +62,7 @@ Một người vừa là nhân viên vừa muốn mua hàng cần hai tài kho�
     │   │   ├── persistence/             # pool, transaction, tạo schema, dữ liệu mẫu
     │   │   ├── service/                 # ca sử dụng (mỗi thao tác = 1 transaction)
     │   │   ├── web/                     # servlet, filter, hàm EL
-    │   │   ├── config/AppConfig.java    # đọc app.properties
+    │   │   ├── config/AppConfig.java    # đọc app.properties, biến môi trường SHOP_*
     │   │   └── util/                    # PasswordHasher, Money
     │   ├── resources
     │   │   ├── app.properties           # cấu hình mặc định
