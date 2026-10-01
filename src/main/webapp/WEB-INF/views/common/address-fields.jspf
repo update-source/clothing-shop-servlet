@@ -1,0 +1,34 @@
+<%-- Các ô nhập địa chỉ (mô hình 2 cấp tỉnh – xã). Biến tuỳ chọn: addr (Address để điền sẵn), provinces --%>
+<div class="form-group row">
+  <div class="col-md-6">
+    <label class="text-black form-required" for="recipientName">Tên người nhận</label>
+    <input type="text" class="form-control" id="recipientName" name="recipientName" required maxlength="100"
+           value="${fn:escapeXml(addr.recipientName)}">
+  </div>
+  <div class="col-md-6">
+    <label class="text-black form-required" for="addrPhone">Số điện thoại</label>
+    <input type="tel" class="form-control" id="addrPhone" name="phone" required pattern="(0|\+84)[0-9]{9,10}"
+           value="${fn:escapeXml(addr.phone)}" placeholder="09xxxxxxxx">
+  </div>
+</div>
+<div class="form-group">
+  <label class="text-black form-required" for="street">Số nhà, tên đường</label>
+  <input type="text" class="form-control" id="street" name="street" required maxlength="255"
+         value="${fn:escapeXml(addr.street)}" placeholder="Ví dụ: 12 Lê Lợi">
+</div>
+<div class="form-group row">
+  <div class="col-md-6">
+    <label class="text-black form-required" for="ward">Phường/xã</label>
+    <input type="text" class="form-control" id="ward" name="ward" required maxlength="100"
+           value="${fn:escapeXml(addr.ward)}" placeholder="Ví dụ: Phường Bến Thành">
+  </div>
+  <div class="col-md-6">
+    <label class="text-black form-required" for="province">Tỉnh/thành phố</label>
+    <select id="province" name="province" class="form-control" required>
+      <option value="">-- Chọn tỉnh/thành --</option>
+      <c:forEach items="${provinces}" var="pv">
+        <option value="${pv}" ${addr.province == pv ? 'selected' : ''}>${pv}</option>
+      </c:forEach>
+    </select>
+  </div>
+</div>
