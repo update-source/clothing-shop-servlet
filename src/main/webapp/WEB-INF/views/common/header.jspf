@@ -5,7 +5,9 @@
   <title><c:out value="${empty pageTitle ? 'Thời trang mỗi ngày' : pageTitle}"/> &mdash; Shoppers</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap">
   <link rel="stylesheet" href="${ctx}/fonts/icomoon/style.css">
   <link rel="stylesheet" href="${ctx}/css/bootstrap.min.css">
   <link rel="stylesheet" href="${ctx}/css/magnific-popup.css">
@@ -14,7 +16,7 @@
   <link rel="stylesheet" href="${ctx}/css/owl.theme.default.min.css">
   <link rel="stylesheet" href="${ctx}/css/aos.css">
   <link rel="stylesheet" href="${ctx}/css/style.css">
-  <link rel="stylesheet" href="${ctx}/css/shop.css">
+  <link rel="stylesheet" href="${ctx}/css/shop.css?v=2">
 </head>
 <body>
 <div class="site-wrap">
