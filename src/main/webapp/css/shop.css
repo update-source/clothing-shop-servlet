@@ -1,5 +1,15 @@
 /* Bổ sung cho template Shoppers — các thành phần riêng của cửa hàng */
 
+/* ---------- Font tiếng Việt ----------
+   Font Mukta của template thiếu dải U+1EA0–U+1EF1 (ạ, ả, ấ, ộ, ữ, ự...) nên chữ có dấu bị lấy từ font khác.
+   Be Vietnam Pro có đủ bộ dấu; các font dự phòng của hệ điều hành cũng hỗ trợ tiếng Việt. */
+:root {
+  --font-family-sans-serif: "Be Vietnam Pro", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+body, .tooltip, .popover, button, input, select, textarea {
+  font-family: var(--font-family-sans-serif);
+}
+
 /* ---------- Thẻ sản phẩm ---------- */
 .product-card { position: relative; height: 100%; background: #fff; }
 .product-card .block-4-image img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }

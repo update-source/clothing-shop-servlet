@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VNPAY (giả lập) — Cổng thanh toán</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap">
   <link rel="stylesheet" href="${ctx}/css/bootstrap.min.css">
+  <link rel="stylesheet" href="${ctx}/css/shop.css?v=2">
   <style>
     body { background: #f0f4f8; }
     .gateway { max-width: 520px; margin: 60px auto; }
