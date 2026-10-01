@@ -1,1 +1,10 @@
-<%-- Hành động bổ sung của khách trên đơn (ví dụ thanh toán lại VNPAY) --%>
+<%-- Hành động bổ sung của khách trên đơn: thanh toán (lại) VNPAY khi đơn đang chờ và chưa trả tiền --%>
+<c:if test="${order.canPayOnline()}">
+  <form action="${ctx}/orders/pay" method="post">
+    <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+    <input type="hidden" name="id" value="${order.id}">
+    <button type="submit" class="btn btn-primary btn-sm">Thanh toán VNPAY</button>
+  </form>
+  <small class="text-muted align-self-center">Hạn thanh toán:
+    ${f:dateTime(order.orderDate.plusMinutes(applicationScope.vnpayTimeoutMinutes))}</small>
+</c:if>
