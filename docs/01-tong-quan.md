@@ -48,6 +48,7 @@ Một người vừa là nhân viên vừa muốn mua hàng cần hai tài kho�
 ├── docker-compose.yml                   # chạy bằng Docker (H2)
 ├── docker-compose.mysql.yml             # bổ sung MySQL 8.4
 ├── .env.example                         # mẫu biến cấu hình cho Docker
+├── render.yaml                          # deploy miễn phí lên Render
 ├── docs/                                # tài liệu này
 └── src
     ├── main

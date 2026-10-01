@@ -10,6 +10,7 @@ Maven hay Tomcat.
 | `docker-compose.yml` | Chạy ứng dụng với H2 nhúng, dữ liệu trong volume `shop-data` |
 | `docker-compose.mysql.yml` | File bổ sung: thêm MySQL 8.4 và chuyển ứng dụng sang MySQL |
 | `.env.example` | Mẫu biến cấu hình — chép thành `.env` (đã `.gitignore`) |
+| `render.yaml` | Blueprint để deploy miễn phí lên Render — xem [Deploy miễn phí](#deploy-miễn-phí) |
 
 ```mermaid
 flowchart LR
@@ -73,6 +74,7 @@ cp .env.example .env
 
 Image đã đặt sẵn: `SHOP_DB_URL` trỏ tới `/data/db/shop` (H2), `SHOP_UPLOAD_DIR=/data/uploads`,
 `TZ=Asia/Ho_Chi_Minh`, `JAVA_OPTS=-XX:MaxRAMPercentage=75` (JVM dùng tối đa 75% RAM cấp cho container).
+Tomcat nghe ở cổng trong biến `PORT` nếu nền tảng đặt (Render đặt `10000`), mặc định `8080`.
 Muốn thêm biến khác thì thêm vào mục `environment:` của service `app` trong `docker-compose.yml`.
 
 ## Dùng MySQL
@@ -138,10 +140,73 @@ Tomcat trong image đã bật `RemoteIpValve`: với request đi qua proxy (đ�
 cookie phiên có cờ `Secure`, IP gửi sang VNPAY là IP thật của khách.
 
 **Bảo mật khi chạy thật:**
-- Tài khoản mẫu `admin/admin123`, `staff/staff123`, `khachhang/123456` có mật khẩu công khai — đặt
-  `SHOP_DB_SEED=false` **trước lần chạy đầu** rồi tạo tài khoản quản trị riêng, hoặc đổi ngay mật khẩu các tài khoản
-  mẫu sau khi chạy.
+- Tài khoản mẫu `admin/admin123`, `staff/staff123`, `khachhang/123456` có mật khẩu công khai. Ngay sau lần chạy đầu:
+  đăng nhập `admin`, đổi mật khẩu (*tên của bạn ở menu trái* → đổi mật khẩu), làm tương tự với `staff`, rồi khoá
+  `khachhang` ở *Quản trị → Tài khoản*. (Không nên đặt `SHOP_DB_SEED=false` cho CSDL trống: khi đó không có tài khoản
+  quản trị nào và giao diện không có chỗ tạo quản trị viên đầu tiên.)
 - Không commit `.env`; dùng mật khẩu MySQL mạnh. Cổng MySQL không được mở ra ngoài (Compose không publish cổng 3306).
+
+## Deploy miễn phí
+
+Tình hình các gói miễn phí (tháng 10/2026 — các nhà cung cấp thay đổi thường xuyên, kiểm tra lại trước khi đăng ký):
+
+| Nơi | Miễn phí gì | Cần thẻ | Ghi chú |
+| --- | --- | --- | --- |
+| **Render** (khuyên dùng) | Web service Docker 512 MB RAM, 0.1 CPU, 750 giờ/tháng | Không | Ngủ sau 15 phút không có truy cập; ổ đĩa không lưu lại |
+| Oracle Cloud Always Free | Máy ảo ARM, chạy được nguyên `docker compose` như [mục VPS](#đưa-lên-máy-chủ-vps) | Có (xác minh) | Dữ liệu lưu lâu dài; cài đặt nhiều bước hơn |
+| Koyeb | 1 service 512 MB | Có | |
+| Railway | Dùng thử 5 USD rồi 1 USD/tháng | Không | Không đủ chạy liên tục |
+| Fly.io | Không còn gói miễn phí | — | |
+
+### Render
+
+Repo đã có sẵn `render.yaml` (Blueprint): service Docker gói `free`, vùng Singapore, tự deploy khi có commit mới trên
+`main`, kèm tham số JVM cho máy 0.1 CPU.
+
+1. Đăng ký tại [render.com](https://render.com) bằng tài khoản GitHub (không cần thẻ).
+2. *New* → *Blueprint* → cho phép Render truy cập repo `clothing-shop-servlet` (repo private vẫn được) → chọn repo →
+   *Apply*.
+3. Đợi build (khoảng 5–10 phút lần đầu, có chạy bộ test). Địa chỉ có dạng `https://clothing-shop-xxxx.onrender.com`,
+   đã có HTTPS.
+
+Đã đo bằng cách giả lập đúng giới hạn của gói free (`docker run --memory=512m --cpus=0.1`):
+
+| Chỉ số | Kết quả |
+| --- | --- |
+| RAM sử dụng | ~130–180 MB / 512 MB |
+| Từ lúc khởi động tới trang đầu tiên | ~75–85 s (không có `-XX:TieredStopAtLevel=1`: ~150 s) |
+| Mở mỗi trang lần đầu | 2–6 s; các lần sau nhanh |
+| Toàn bộ luồng đặt hàng + VNPAY giả lập (~25 request) | ~18 s |
+
+**Giới hạn cần biết:**
+- **Ngủ sau 15 phút** không có truy cập; người vào đầu tiên phải đợi Render đánh thức cộng thời gian khởi động ở
+  trên (1–3 phút).
+- **Ổ đĩa không lưu lại:** mỗi lần service ngủ dậy, deploy lại hay khởi động lại, CSDL H2 trở về dữ liệu mẫu và ảnh
+  quản trị viên tải lên bị mất (ảnh sản phẩm mẫu nằm sẵn trong image nên không mất). Phù hợp để demo; muốn giữ dữ liệu
+  thì dùng MySQL bên ngoài như dưới đây.
+- Tài khoản mẫu có mật khẩu công khai — ai có địa chỉ cũng đăng nhập `admin` được. Chấp nhận được khi demo (dữ liệu tự
+  về mẫu); nếu dùng MySQL bên ngoài thì đổi mật khẩu như phần *Bảo mật khi chạy thật* ở trên.
+
+### Giữ dữ liệu: MySQL miễn phí trên Aiven
+
+[Aiven](https://aiven.io/free-mysql-database) có gói MySQL miễn phí (1 GB lưu trữ, không cần thẻ; tự tắt nếu lâu
+không dùng — có email báo trước).
+
+1. Đăng ký Aiven → *Create service* → **MySQL**, gói **Free** → đợi trạng thái *Running*.
+2. Ở trang *Overview* của service, lấy *Host*, *Port*, *User* (`avnadmin`), *Password*, *Database* (`defaultdb`).
+3. Trên Render: service `clothing-shop` → *Environment* → thêm các biến rồi *Save, rebuild and deploy*:
+
+   | Biến | Giá trị |
+   | --- | --- |
+   | `SHOP_DB_DRIVER` | `com.mysql.cj.jdbc.Driver` |
+   | `SHOP_DB_URL` | `jdbc:mysql://<host>:<port>/defaultdb?sslMode=REQUIRED&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh` |
+   | `SHOP_DB_USERNAME` | `avnadmin` |
+   | `SHOP_DB_PASSWORD` | mật khẩu của Aiven |
+   | `SHOP_DB_POOLSIZE` | `3` |
+
+Lần khởi động đầu, ứng dụng tự tạo bảng và dữ liệu mẫu trên MySQL; các lần sau giữ nguyên dữ liệu. Kết nối bắt buộc
+TLS (`sslMode=REQUIRED`) và pool 3 kết nối đã được chạy thử với MySQL 8.4. Ảnh tải lên vẫn mất khi Render khởi động
+lại (cần ổ đĩa của gói trả phí).
 
 ## Sao lưu và khôi phục
 
