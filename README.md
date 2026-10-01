@@ -35,6 +35,32 @@ Voucher mẫu: `WELCOME30K` (đơn từ 199.000 ₫), `SALE10` (10%, tối đa 5
 Dữ liệu H2 nằm ở `~/clothing-shop/data`, ảnh tải lên ở `~/clothing-shop/uploads`.
 Xoá thư mục `~/clothing-shop` để làm lại từ dữ liệu mẫu.
 
+### Đổi cổng (port)
+
+Mặc định Jetty chạy ở cổng 8080. Đổi khi chạy bằng tham số `jetty.http.port`:
+
+```bash
+# Git Bash / CMD / Linux / macOS
+mvn jetty:run -Djetty.http.port=8081
+```
+
+```powershell
+# PowerShell: phải đặt tham số -D trong dấu nháy, nếu không PowerShell tách ở dấu chấm
+# và Maven báo "Unknown lifecycle phase .http.port=8081"
+mvn jetty:run "-Djetty.http.port=8081"
+```
+
+Muốn cố định cổng, thêm vào phần `<configuration>` của plugin `jetty-ee10-maven-plugin` trong `pom.xml`:
+
+```xml
+<httpConnector>
+    <port>8081</port>
+</httpConnector>
+```
+
+Khi triển khai lên Tomcat, cổng do Tomcat quyết định (thuộc tính `port` của `<Connector>` trong `conf/server.xml`).
+Không cần sửa gì trong ứng dụng: return URL của VNPAY được ghép từ địa chỉ của request hiện tại.
+
 ### Triển khai lên Tomcat
 
 ```bash
@@ -56,7 +82,8 @@ db.password=your-password
 ```
 
 Bảng được tạo tự động từ `src/main/resources/db/schema.sql` (cú pháp chung cho MySQL 8 và H2).
-Mọi khoá trong `app.properties` cũng có thể ghi đè bằng system property `-Dshop.<khoá>=...`.
+Mọi khoá trong `app.properties` cũng có thể ghi đè bằng system property `-Dshop.<khoá>=...`,
+ví dụ `mvn jetty:run "-Dshop.order.vnpayTimeoutMinutes=30"` (trong PowerShell nhớ đặt trong dấu nháy).
 
 ### VNPAY
 
@@ -125,6 +152,17 @@ mvn test
 
 Gồm test domain cho các kịch bản A–E trong đặc tả (VNPAY + voucher, chiếc áo cuối cùng, huỷ đơn COD đã xác nhận,
 khách từ chối nhận hàng, viết đánh giá), test DAO/transaction trên H2, test ký/kiểm chữ ký VNPAY và tự huỷ đơn quá hạn.
+
+## Xử lý sự cố
+
+| Hiện tượng | Nguyên nhân / cách xử lý |
+| --- | --- |
+| `Unknown lifecycle phase ".http.port=8081"` | Chạy trong PowerShell mà không đặt tham số `-D...` trong dấu nháy — xem mục *Đổi cổng*. |
+| `Address already in use` / `Failed to bind to 0.0.0.0:8080` | Cổng đang bị chiếm (thường là một lần `mvn jetty:run` khác chưa tắt). Tìm tiến trình: `netstat -ano \| findstr :8080`, dừng: `taskkill /PID <pid> /F`; hoặc chạy ở cổng khác. |
+| Sửa code Java nhưng web không đổi | Jetty chỉ tự nạp lại JSP/CSS/JS; thay đổi Java cần dừng (Ctrl+C) và chạy lại `mvn jetty:run`. |
+| Chữ tiếng Việt hiển thị lẫn font / CSS cũ | Trình duyệt còn giữ CSS cũ — nhấn Ctrl+F5. Font Be Vietnam Pro tải từ Google Fonts; khi offline trang dùng font hệ thống (vẫn đủ dấu). |
+| Không thấy dữ liệu mẫu / muốn làm lại từ đầu | Dừng server, xoá thư mục `~/clothing-shop` rồi chạy lại — dữ liệu mẫu được tạo khi CSDL trống. |
+| `Database may be already in use` (H2) | Hai server cùng mở một file H2. Tắt bớt một server, hoặc cho server thứ hai dùng file khác: `"-Dshop.db.url=jdbc:h2:file:./data/shop2;MODE=MySQL;DATABASE_TO_LOWER=TRUE"`. |
 
 ## Quy trình Git
 
