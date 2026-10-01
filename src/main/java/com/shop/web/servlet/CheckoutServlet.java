@@ -55,6 +55,11 @@ public class CheckoutServlet extends BaseServlet {
                     addressId == null ? AddressServlet.form(req) : null,
                     req.getParameter("saveAddress") != null, method, param(req, "voucherCode"), param(req, "note"));
             Order order = checkout.placeOrder(customerId, form);
+            if (method == PaymentMethod.VNPAY) {
+                // Hàng đã được giữ; chuyển sang cổng VNPAY để trả trước.
+                redirect(req, resp, "/orders/vnpay?id=" + order.getId());
+                return;
+            }
             flash(req, Flash.success("Đặt hàng thành công! Mã đơn của bạn là #" + order.getId() + "."));
             redirect(req, resp, "/checkout/success?id=" + order.getId());
         } catch (DomainException e) {
