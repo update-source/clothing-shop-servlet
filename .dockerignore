@@ -16,6 +16,7 @@ docs
 .env
 .env.*
 docker-compose*.yml
+render.yaml
 Dockerfile
 .dockerignore
 src/main/resources/app-local.properties
