@@ -1,0 +1,21 @@
+# Chỉ cần pom.xml và src/ để build image
+.git
+.gitignore
+.gitattributes
+.claude
+.idea
+.vscode
+*.iml
+target
+data
+uploads
+jsp
+docs
+*.md
+*.zip
+.env
+.env.*
+docker-compose*.yml
+Dockerfile
+.dockerignore
+src/main/resources/app-local.properties
