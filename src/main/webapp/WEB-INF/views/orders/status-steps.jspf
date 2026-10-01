@@ -1,0 +1,16 @@
+<%-- Tiến trình đơn: Chờ xác nhận → Đã xác nhận → Đang giao → Hoàn tất; trạng thái kết thúc khác hiện riêng. Biến: order --%>
+<c:set var="st" value="${order.status.name()}"/>
+<c:choose>
+  <c:when test="${st == 'CANCELLED' or st == 'DELIVERY_FAILED' or st == 'RETURNED'}">
+    <p class="mb-0"><span class="badge badge-${order.status.badge} p-2">${order.status.label}</span></p>
+  </c:when>
+  <c:otherwise>
+    <c:set var="stepIndex" value="${st == 'PENDING' ? 0 : st == 'CONFIRMED' ? 1 : st == 'SHIPPING' ? 2 : 3}"/>
+    <ul class="order-timeline mb-0">
+      <li class="${stepIndex >= 0 ? 'done' : ''}">Chờ xác nhận</li>
+      <li class="${stepIndex >= 1 ? 'done' : ''}">Đã xác nhận</li>
+      <li class="${stepIndex >= 2 ? 'done' : ''}">Đang giao</li>
+      <li class="${stepIndex >= 3 ? 'done' : ''}">Hoàn tất</li>
+    </ul>
+  </c:otherwise>
+</c:choose>
