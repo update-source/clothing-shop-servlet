@@ -7,6 +7,7 @@ import com.shop.model.account.User;
 import com.shop.web.AccessAttributes;
 import com.shop.web.Auth;
 import com.shop.web.Flash;
+import com.shop.web.Referer;
 import com.shop.web.SessionUser;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -41,13 +42,16 @@ public class AccessFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         SessionUser sessionUser = Auth.current(req);
         if (sessionUser == null) {
-            String next = req.getRequestURI().substring(req.getContextPath().length());
-            if ("GET".equals(req.getMethod()) && req.getQueryString() != null) {
-                next += "?" + req.getQueryString();
+            String next;
+            if ("GET".equals(req.getMethod())) {
+                next = req.getRequestURI().substring(req.getContextPath().length())
+                        + (req.getQueryString() == null ? "" : "?" + req.getQueryString());
+            } else {
+                // Thao tác POST (ví dụ thêm vào giỏ) — đăng nhập xong quay lại trang đang xem.
+                next = Referer.path(req, "/");
             }
             req.getSession().setAttribute("flash", Flash.info("Vui lòng đăng nhập để tiếp tục"));
-            resp.sendRedirect(req.getContextPath() + "/login?next="
-                    + URLEncoder.encode("GET".equals(req.getMethod()) ? next : "/", StandardCharsets.UTF_8));
+            resp.sendRedirect(req.getContextPath() + "/login?next=" + URLEncoder.encode(next, StandardCharsets.UTF_8));
             return;
         }
         User user = Daos.users().findById(sessionUser.getId()).orElse(null);
