@@ -2,6 +2,7 @@ package com.shop.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -9,9 +10,12 @@ import com.shop.dao.Daos;
 import com.shop.dao.Page;
 import com.shop.dao.ProductFilter;
 import com.shop.model.DomainException;
+import com.shop.model.account.Address;
+import com.shop.model.account.AddressBook;
 import com.shop.model.account.Customer;
 import com.shop.model.account.CustomerLevel;
 import com.shop.model.account.Employee;
+import com.shop.model.account.Gender;
 import com.shop.model.catalog.Product;
 import com.shop.model.catalog.ProductVariant;
 import com.shop.model.discount.Voucher;
@@ -180,5 +184,29 @@ class PersistenceIntegrationTest {
         assertEquals(2, staff.size());
         assertTrue(staff.stream().anyMatch(Employee::isAdmin));
         assertFalse(Daos.users().existsEmail("new@mail.vn", null));
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(8)
+    void newCustomerWithoutDefaultAddressLoadsEmptyBook() {
+        // Hồi quy: default_address_id = NULL từng làm Jdbc.one ném NullPointerException (trang thanh toán, sổ địa chỉ).
+        long id = Tx.inTransaction(() -> {
+            Customer c = Customer.register("moidangky", "secret1", "Khách Mới", Gender.MALE, null,
+                    "moidangky@example.com", "0912000111");
+            Daos.users().insert(c);
+            return c.getId();
+        });
+        Tx.release();
+        AddressBook book = Daos.users().findCustomer(id).orElseThrow().getAddressBook();
+        assertTrue(book.getAddresses().isEmpty());
+        assertNull(book.getDefault());
+
+        Tx.inTransaction(() -> {
+            AddressBook b = Daos.users().findCustomer(id).orElseThrow().getAddressBook();
+            b.add(new Address("Khách Mới", "0912000111", "5 Nguyễn Huệ", "Phường Sài Gòn", "TP. Hồ Chí Minh"));
+            Daos.addresses().saveBook(id, b);
+        });
+        Tx.release();
+        assertEquals("5 Nguyễn Huệ", Daos.users().findCustomer(id).orElseThrow().getAddressBook().getDefault().getStreet());
     }
 }
