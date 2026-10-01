@@ -6,7 +6,7 @@
 mvn test
 ```
 
-48 test JUnit 5, khoảng vài giây. Test tích hợp dùng H2 **trong bộ nhớ** (`TestDatabase`) nên không đụng tới dữ liệu
+52 test JUnit 5, khoảng vài giây. Test tích hợp dùng H2 **trong bộ nhớ** (`TestDatabase`) nên không đụng tới dữ liệu
 ở `~/clothing-shop`. `mvn package` cũng chạy toàn bộ test trước khi tạo WAR.
 
 ## Danh sách test
@@ -73,6 +73,15 @@ mvn test
 | | `tamperedAmountFailsVerification` | Sửa số tiền / bỏ chữ ký → không qua kiểm tra |
 | | `parseReadsResultAndAmount` | Đọc kết quả giao dịch |
 | `PaymentExpiryIntegrationTest` | `overdueUnpaidVnpayOrderIsCancelledAndStockReleased` | Job tự huỷ đơn VNPAY quá hạn, nhả hàng |
+
+### Cấu hình (`src/test/java/com/shop/config`)
+
+| Lớp test | Test | Kiểm tra |
+| --- | --- | --- |
+| `AppConfigTest` | `envNameIsUpperCaseWithUnderscores` | `db.poolSize` → `SHOP_DB_POOLSIZE` |
+| | `environmentVariableIsRead` | Đọc được biến môi trường `SHOP_*` (biến thử đặt trong cấu hình surefire của `pom.xml`) |
+| | `systemPropertyWinsOverEnvironmentAndFile` | `-Dshop.<khoá>` được ưu tiên nhất |
+| | `fileValueAndDefaultsApplyWhenNotOverridden` | Giá trị từ `app.properties` và giá trị mặc định |
 
 ## Kiểm thử thủ công (trên giao diện)
 

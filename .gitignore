@@ -23,6 +23,7 @@ uploads/
 
 # Local overrides / secrets
 src/main/resources/app-local.properties
+.env
 
 # Original UI template archive
 shoppers-gh-pages.zip

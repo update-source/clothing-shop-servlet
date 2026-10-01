@@ -23,7 +23,9 @@ Cấu hình đọc theo thứ tự ưu tiên tăng dần (sau ghi đè trước)
 1. `src/main/resources/app.properties` — giá trị mặc định (có trong repo).
 2. `src/main/resources/app-local.properties` — ghi đè trên máy của bạn (đã `.gitignore`, dùng cho mật khẩu CSDL,
    khoá VNPAY…).
-3. System property `-Dshop.<khoá>=<giá trị>` khi chạy.
+3. Biến môi trường `SHOP_<KHOÁ>`: viết hoa, dấu chấm thành gạch dưới (`db.url` → `SHOP_DB_URL`,
+   `db.poolSize` → `SHOP_DB_POOLSIZE`). Đây là cách cấu hình khi chạy bằng Docker — xem [mục 11](11-docker.md).
+4. System property `-Dshop.<khoá>=<giá trị>` khi chạy.
 
 `${user.home}` trong giá trị được thay bằng thư mục người dùng.
 
@@ -59,6 +61,7 @@ mvn jetty:run -Dshop.order.vnpayTimeoutMinutes=30
 | Tạm thời khi chạy | `mvn jetty:run -Djetty.http.port=8081` (PowerShell: `mvn jetty:run "-Djetty.http.port=8081"`) |
 | Cố định cho dự án | Thêm `<httpConnector><port>8081</port></httpConnector>` vào `<configuration>` của plugin `jetty-ee10-maven-plugin` trong `pom.xml` |
 | Trên Tomcat | Thuộc tính `port` của `<Connector>` trong `conf/server.xml` của Tomcat |
+| Docker Compose | `APP_PORT=8081` trong `.env` (bên trong container vẫn là 8080) |
 
 Ứng dụng không cần sửa gì khi đổi cổng: return URL của VNPAY được ghép từ địa chỉ của request hiện tại.
 
@@ -72,6 +75,11 @@ mvn jetty:run -Dshop.order.vnpayTimeoutMinutes=30
 Muốn làm lại từ dữ liệu mẫu: dừng server, xoá thư mục `~/clothing-shop`, chạy lại. Hai server không mở chung được
 một file H2 — server thứ hai dùng file khác, ví dụ
 `-Dshop.db.url=jdbc:h2:file:./data/shop2;MODE=MySQL;DATABASE_TO_LOWER=TRUE` (thư mục `data/` đã `.gitignore`).
+
+## Triển khai bằng Docker
+
+Xem [mục 11](11-docker.md): `docker compose up -d --build` là chạy (H2), kèm cấu hình MySQL, HTTPS qua reverse proxy
+và sao lưu.
 
 ## Triển khai lên Tomcat
 
@@ -99,7 +107,8 @@ db.password=your-password
 ```
 
 Khi khởi động, ứng dụng tự tạo bảng (`db/schema.sql`) và dữ liệu mẫu nếu CSDL trống. Bộ test tự động chạy trên H2;
-cấu hình MySQL chưa được kiểm thử tự động.
+với MySQL 8.4, toàn bộ kịch bản kiểm thử giao diện đã chạy thử qua cấu hình Docker (`docker-compose.mysql.yml`,
+[mục 11](11-docker.md#dùng-mysql)) — đó cũng là cách nhanh nhất để có MySQL mà không phải cài.
 
 ## Dùng cổng VNPAY sandbox thật
 

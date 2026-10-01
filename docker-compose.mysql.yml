@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# Bổ sung cho docker-compose.yml: chạy kèm MySQL 8.4 thay cho H2.
+#   docker compose -f docker-compose.yml -f docker-compose.mysql.yml up -d --build
+# Cần đặt MYSQL_PASSWORD và MYSQL_ROOT_PASSWORD trong file .env.
+# Ảnh sản phẩm tải lên vẫn nằm trong volume "shop-data".
+# ---------------------------------------------------------------------------
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      MYSQL_DATABASE: clothing_shop
+      MYSQL_USER: shop
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Đặt MYSQL_PASSWORD trong file .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Đặt MYSQL_ROOT_PASSWORD trong file .env}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      # Trong lúc khởi tạo, MySQL tạm chạy không mở cổng TCP nên ping qua 127.0.0.1 chỉ thành công khi đã sẵn sàng
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  app:
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SHOP_DB_DRIVER: com.mysql.cj.jdbc.Driver
+      SHOP_DB_URL: jdbc:mysql://db:3306/clothing_shop?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
+      SHOP_DB_USERNAME: shop
+      SHOP_DB_PASSWORD: ${MYSQL_PASSWORD}
+
+volumes:
+  mysql-data:
