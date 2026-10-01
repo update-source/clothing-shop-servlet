@@ -1,5 +1,6 @@
 package com.shop.web.filter;
 
+import com.shop.model.DomainException;
 import com.shop.persistence.Tx;
 import com.shop.web.Auth;
 import com.shop.web.NavModel;
@@ -37,9 +38,22 @@ public class RequestContextFilter implements Filter {
                 req.setAttribute("auth", Auth.current(req));
             }
             chain.doFilter(request, response);
+        } catch (IOException | ServletException | RuntimeException e) {
+            if (!(rootCause(e) instanceof DomainException)) {
+                req.getServletContext().log("Request failed: " + req.getMethod() + " " + req.getRequestURI(), e);
+            }
+            throw e;
         } finally {
             Tx.release();
         }
+    }
+
+    private static Throwable rootCause(Throwable e) {
+        Throwable t = e;
+        while (t.getCause() != null && t.getCause() != t) {
+            t = t.getCause();
+        }
+        return t;
     }
 
     static boolean isStatic(HttpServletRequest req) {
