@@ -1,0 +1,10 @@
+<%-- Menu trái của khu tài khoản khách. Trang gọi đặt accountNav = profile|addresses|orders|wishlist --%>
+<div class="border p-4 rounded mb-4">
+  <h3 class="mb-3 h6 text-uppercase text-black d-block">Tài khoản của tôi</h3>
+  <ul class="list-unstyled mb-0">
+    <li class="mb-2"><a href="${ctx}/account/profile" class="${accountNav == 'profile' ? 'font-weight-bold text-primary' : ''}">Thông tin cá nhân</a></li>
+    <li class="mb-2"><a href="${ctx}/account/addresses" class="${accountNav == 'addresses' ? 'font-weight-bold text-primary' : ''}">Sổ địa chỉ</a></li>
+    <li class="mb-2"><a href="${ctx}/orders" class="${accountNav == 'orders' ? 'font-weight-bold text-primary' : ''}">Đơn hàng của tôi</a></li>
+    <li class="mb-0"><a href="${ctx}/wishlist" class="${accountNav == 'wishlist' ? 'font-weight-bold text-primary' : ''}">Sản phẩm yêu thích</a></li>
+  </ul>
+</div>
