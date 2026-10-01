@@ -4,6 +4,10 @@ Cửa hàng quần áo bán trực tuyến xây dựng bằng **Java Servlet + J
 "Đặc tả bài toán — Shop quần áo E-commerce" và **class diagram v6**. Giao diện dựa trên template
 *Shoppers* (Colorlib, CC BY 3.0), Việt hoá toàn bộ.
 
+Tài liệu chi tiết (kiến trúc, mô hình lớp, CSDL, URL, luồng nghiệp vụ, kiểm thử, hướng dẫn sử dụng):
+**[docs/](docs/README.md)** — kèm [đặc tả bài toán](docs/dac-ta/dac-ta-bai-toan.md) và
+[class diagram v6](docs/dac-ta/class-diagram-v6.drawio).
+
 ## Công nghệ
 
 | Thành phần | Lựa chọn |
