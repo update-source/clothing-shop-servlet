@@ -1,0 +1,139 @@
+<%-- Phần đầu trang dùng chung. Trang gọi đặt trước: pageTitle, activeNav (home|shop|promotions|about|contact) --%>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title><c:out value="${empty pageTitle ? 'Thời trang mỗi ngày' : pageTitle}"/> &mdash; Shoppers</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+  <link rel="stylesheet" href="${ctx}/fonts/icomoon/style.css">
+  <link rel="stylesheet" href="${ctx}/css/bootstrap.min.css">
+  <link rel="stylesheet" href="${ctx}/css/magnific-popup.css">
+  <link rel="stylesheet" href="${ctx}/css/jquery-ui.css">
+  <link rel="stylesheet" href="${ctx}/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="${ctx}/css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="${ctx}/css/aos.css">
+  <link rel="stylesheet" href="${ctx}/css/style.css">
+  <link rel="stylesheet" href="${ctx}/css/shop.css">
+</head>
+<body>
+<div class="site-wrap">
+  <header class="site-navbar" role="banner">
+    <div class="site-navbar-top">
+      <div class="container">
+        <div class="row align-items-center">
+
+          <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
+            <form action="${ctx}/shop" method="get" class="site-block-top-search">
+              <span class="icon icon-search2"></span>
+              <input type="text" name="q" value="${fn:escapeXml(param.q)}" class="form-control border-0"
+                     placeholder="Tìm áo, quần, giày...">
+            </form>
+          </div>
+
+          <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
+            <div class="site-logo">
+              <a href="${ctx}/" class="js-logo-clone">Shoppers</a>
+            </div>
+          </div>
+
+          <div class="col-6 col-md-4 order-3 order-md-3 text-right">
+            <div class="site-top-icons">
+              <ul>
+                <li class="dropdown account-menu">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                     title="Tài khoản">
+                    <span class="icon icon-person"></span>
+                    <c:if test="${not empty auth}">
+                      <span class="d-none d-lg-inline small"><c:out value="${auth.fullName}"/></span>
+                    </c:if>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <c:choose>
+                      <c:when test="${empty auth}">
+                        <a class="dropdown-item" href="${ctx}/login">Đăng nhập</a>
+                        <a class="dropdown-item" href="${ctx}/register">Đăng ký</a>
+                      </c:when>
+                      <c:otherwise>
+                        <h6 class="dropdown-header"><c:out value="${auth.username}"/></h6>
+                        <c:if test="${auth.customer}">
+                          <a class="dropdown-item" href="${ctx}/account/profile">Tài khoản của tôi</a>
+                          <a class="dropdown-item" href="${ctx}/orders">Đơn hàng của tôi</a>
+                          <a class="dropdown-item" href="${ctx}/account/addresses">Sổ địa chỉ</a>
+                        </c:if>
+                        <c:if test="${auth.employee}">
+                          <a class="dropdown-item" href="${ctx}/staff/orders">Xử lý đơn hàng</a>
+                          <c:if test="${auth.admin}">
+                            <a class="dropdown-item" href="${ctx}/admin">Trang quản trị</a>
+                          </c:if>
+                          <a class="dropdown-item" href="${ctx}/staff/profile">Hồ sơ nhân viên</a>
+                        </c:if>
+                        <div class="dropdown-divider"></div>
+                        <form action="${ctx}/logout" method="post" class="m-0">
+                          <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                          <button type="submit" class="dropdown-item">Đăng xuất</button>
+                        </form>
+                      </c:otherwise>
+                    </c:choose>
+                  </div>
+                </li>
+                <li>
+                  <a href="${ctx}/wishlist" class="site-cart" title="Yêu thích">
+                    <span class="icon icon-heart-o"></span>
+                    <c:if test="${nav.wishlistCount > 0}"><span class="count">${nav.wishlistCount}</span></c:if>
+                  </a>
+                </li>
+                <li>
+                  <a href="${ctx}/cart" class="site-cart" title="Giỏ hàng">
+                    <span class="icon icon-shopping_cart"></span>
+                    <c:if test="${nav.cartCount > 0}"><span class="count">${nav.cartCount}</span></c:if>
+                  </a>
+                </li>
+                <li class="d-inline-block d-md-none ml-md-0">
+                  <a href="#" class="site-menu-toggle js-menu-toggle"><span class="icon-menu"></span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <nav class="site-navigation text-right text-md-center" role="navigation">
+      <div class="container">
+        <ul class="site-menu js-clone-nav d-none d-md-block">
+          <li class="${activeNav == 'home' ? 'active' : ''}"><a href="${ctx}/">Trang chủ</a></li>
+          <li class="has-children ${activeNav == 'shop' ? 'active' : ''}">
+            <a href="${ctx}/shop">Cửa hàng</a>
+            <ul class="dropdown">
+              <c:forEach items="${nav.categories}" var="node">
+                <li class="${empty node.children ? '' : 'has-children'}">
+                  <a href="${ctx}/shop?category=${node.category.id}"><c:out value="${node.category.name}"/></a>
+                  <c:if test="${not empty node.children}">
+                    <ul class="dropdown">
+                      <c:forEach items="${node.children}" var="child">
+                        <li><a href="${ctx}/shop?category=${child.id}"><c:out value="${child.name}"/></a></li>
+                      </c:forEach>
+                    </ul>
+                  </c:if>
+                </li>
+              </c:forEach>
+            </ul>
+          </li>
+          <li class="${activeNav == 'promotions' ? 'active' : ''}"><a href="${ctx}/promotions">Khuyến mãi</a></li>
+          <li class="${activeNav == 'about' ? 'active' : ''}"><a href="${ctx}/about">Giới thiệu</a></li>
+          <li class="${activeNav == 'contact' ? 'active' : ''}"><a href="${ctx}/contact">Liên hệ</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <c:if test="${not empty sessionScope.flash}">
+    <div class="container mt-3">
+      <div class="alert alert-${sessionScope.flash.type} alert-dismissible fade show mb-0" role="alert">
+        <c:out value="${sessionScope.flash.message}"/>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+      </div>
+    </div>
+    <c:remove var="flash" scope="session"/>
+  </c:if>

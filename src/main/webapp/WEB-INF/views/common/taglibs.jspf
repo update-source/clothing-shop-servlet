@@ -1,0 +1,6 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="f" uri="http://shop.local/functions" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
