@@ -21,16 +21,20 @@ RUN mvn -B -q package -DskipTests=${SKIP_TESTS}
 # --- Giai đoạn 2: chạy ---
 FROM tomcat:10.1-jre21-temurin
 
-# Sau reverse proxy (Nginx, Caddy...), lấy scheme/IP thật từ X-Forwarded-Proto / X-Forwarded-For
-# để return URL của VNPAY là https://<tên miền>/... và cookie phiên có cờ Secure.
+# - Sau reverse proxy (Nginx, Caddy, Render...), lấy scheme/IP thật từ X-Forwarded-Proto / X-Forwarded-For
+#   để return URL của VNPAY là https://<tên miền>/... và cookie phiên có cờ Secure.
+# - Cổng HTTP lấy từ biến PORT nếu nền tảng đặt (Render: 10000), mặc định 8080.
 RUN sed -i 's#</Host>#  <Valve className="org.apache.catalina.valves.RemoteIpValve" remoteIpHeader="X-Forwarded-For" protocolHeader="X-Forwarded-Proto" />\n      </Host>#' \
         conf/server.xml \
+    && sed -i 's#<Connector port="8080"#<Connector port="${port.http}"#' conf/server.xml \
+    && printf '%s\n' 'CATALINA_OPTS="$CATALINA_OPTS -Dport.http=${PORT:-8080}"' > bin/setenv.sh \
     && groupadd --system shop \
     && useradd --system --gid shop --home-dir /data --no-create-home shop \
     && mkdir -p /data/db /data/uploads \
     && chown -R shop:shop /data /usr/local/tomcat
 
-COPY --from=build --chown=shop:shop /src/target/clothing-shop.war webapps/ROOT.war
+# Triển khai dạng thư mục: không phải giải nén WAR mỗi lần khởi động
+COPY --from=build --chown=shop:shop /src/target/clothing-shop webapps/ROOT
 
 ENV TZ=Asia/Ho_Chi_Minh \
     JAVA_OPTS="-XX:MaxRAMPercentage=75" \
@@ -43,4 +47,4 @@ EXPOSE 8080
 
 # Dùng chung một cookie để kiểm tra định kỳ không tạo phiên (session) mới mỗi lần
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD curl -fsS -o /dev/null -c /tmp/healthcheck.cookie -b /tmp/healthcheck.cookie http://127.0.0.1:8080/ || exit 1
+    CMD curl -fsS -o /dev/null -c /tmp/healthcheck.cookie -b /tmp/healthcheck.cookie "http://127.0.0.1:${PORT:-8080}/" || exit 1

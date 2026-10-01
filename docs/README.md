@@ -15,7 +15,7 @@ Tài liệu mô tả bài toán, thiết kế và cách vận hành ứng dụng
 | 8 | [Kiểm thử](08-kiem-thu.md) | Bộ test tự động, cách chạy, danh sách kiểm thử thủ công |
 | 9 | [Hướng dẫn sử dụng](09-huong-dan-su-dung.md) | Thao tác cho khách hàng, nhân viên, quản trị viên |
 | 10 | [Quy trình Git](10-quy-trinh-git.md) | Mô hình nhánh, quy ước commit, phiên bản |
-| 11 | [Triển khai bằng Docker](11-docker.md) | Docker Compose (H2 / MySQL), biến môi trường, HTTPS qua reverse proxy, sao lưu |
+| 11 | [Triển khai bằng Docker](11-docker.md) | Docker Compose (H2 / MySQL), biến môi trường, HTTPS qua reverse proxy, deploy miễn phí (Render), sao lưu |
 
 ## Tài liệu gốc
 

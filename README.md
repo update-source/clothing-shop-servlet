@@ -85,6 +85,10 @@ docker compose -f docker-compose.yml -f docker-compose.mysql.yml up -d --build
 Đưa lên máy chủ thật (HTTPS qua Nginx/Caddy, biến môi trường, sao lưu):
 **[docs/11-docker.md](docs/11-docker.md)**.
 
+**Deploy miễn phí:** repo có sẵn `render.yaml` — trên [Render](https://render.com) chọn *New → Blueprint* → repo này
+(không cần thẻ; gói free ngủ sau 15 phút và dữ liệu H2 về lại mẫu khi khởi động lại — muốn giữ dữ liệu thì dùng MySQL
+miễn phí của Aiven). Chi tiết: [docs/11-docker.md#deploy-miễn-phí](docs/11-docker.md#deploy-miễn-phí).
+
 ### Triển khai lên Tomcat
 
 ```bash

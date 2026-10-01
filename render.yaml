@@ -1,0 +1,20 @@
+# ---------------------------------------------------------------------------
+# Render Blueprint — deploy miễn phí lên https://render.com (gói free: 512 MB RAM, 0.1 CPU,
+# ngủ sau 15 phút không có truy cập, ổ đĩa không lưu lại giữa các lần khởi động).
+# Render Dashboard → New → Blueprint → chọn repo này. Hướng dẫn: docs/11-docker.md (mục "Deploy miễn phí").
+# ---------------------------------------------------------------------------
+services:
+  - type: web
+    name: clothing-shop
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    dockerfilePath: ./Dockerfile
+    autoDeployTrigger: commit
+    envVars:
+      # Máy 0.1 CPU: chỉ dùng trình biên dịch JIT C1 — khởi động nhanh gần gấp đôi (đo: ~150 s → ~80 s)
+      - key: JAVA_OPTS
+        value: -XX:MaxRAMPercentage=70 -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xss512k -Djava.security.egd=file:/dev/./urandom
+      - key: SHOP_VNPAY_MODE
+        value: mock
