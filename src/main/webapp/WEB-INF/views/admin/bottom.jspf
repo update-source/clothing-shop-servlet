@@ -1,0 +1,6 @@
+<%-- Đóng khung trang khu quản lý; trang gọi tự đóng </body></html> sau script riêng (nếu có) --%>
+  </main>
+</div>
+<script src="${ctx}/js/jquery-3.3.1.min.js"></script>
+<script src="${ctx}/js/popper.min.js"></script>
+<script src="${ctx}/js/bootstrap.min.js"></script>
