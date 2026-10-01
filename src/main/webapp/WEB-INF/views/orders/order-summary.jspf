@@ -1,0 +1,83 @@
+<%-- Phần chung của chi tiết đơn (khách & nhân viên). Biến: order, linkProducts (true: tên sản phẩm có link) --%>
+<div class="row">
+  <div class="col-lg-8 mb-4">
+    <div class="site-blocks-table">
+      <table class="table table-bordered mb-0">
+        <thead>
+          <tr>
+            <th class="product-thumbnail">Ảnh</th>
+            <th>Sản phẩm</th>
+            <th class="text-right">Đơn giá đã chốt</th>
+            <th class="text-center">SL</th>
+            <th class="text-right">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <c:forEach items="${order.details}" var="d">
+            <c:set var="dp" value="${d.variant.product}"/>
+            <tr>
+              <td class="product-thumbnail">
+                <img src="${ctx}/${empty dp.imageUrl ? 'images/cloth_1.jpg' : dp.imageUrl}" alt="" class="img-fluid">
+              </td>
+              <td>
+                <c:choose>
+                  <c:when test="${linkProducts}"><a href="${ctx}/product?id=${dp.id}" class="text-black"><c:out value="${dp.name}"/></a></c:when>
+                  <c:otherwise><span class="text-black"><c:out value="${dp.name}"/></span></c:otherwise>
+                </c:choose>
+                <small class="text-muted d-block">Màu <c:out value="${d.variant.color}"/> · Size ${fn:escapeXml(d.variant.size)}</small>
+              </td>
+              <td class="text-right">${f:vnd(d.unitPrice)}</td>
+              <td class="text-center">${d.quantity}</td>
+              <td class="text-right">${f:vnd(d.subtotal)}</td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </div>
+    <c:if test="${not empty order.note}">
+      <div class="border rounded p-3 mt-3"><strong class="text-black">Ghi chú:</strong> <c:out value="${order.note}"/></div>
+    </c:if>
+  </div>
+  <div class="col-lg-4">
+    <div class="border rounded p-4 mb-4">
+      <h3 class="h6 text-uppercase text-black">Thanh toán</h3>
+      <table class="table table-sm mb-0">
+        <tr><td>Tạm tính</td><td class="text-right">${f:vnd(order.subtotal)}</td></tr>
+        <tr>
+          <td>Giảm giá<c:if test="${not empty order.voucher}"> <span class="badge badge-light">${order.voucher.code}</span></c:if></td>
+          <td class="text-right">− ${f:vnd(order.discount)}</td>
+        </tr>
+        <tr><td>Phí vận chuyển</td><td class="text-right">${f:vnd(order.shippingFee)}</td></tr>
+        <tr class="font-weight-bold text-black"><td>Tổng cộng</td><td class="text-right">${f:vnd(order.total)}</td></tr>
+      </table>
+      <p class="mb-1 mt-3">${order.paymentMethod.label}</p>
+      <p class="mb-0">
+        <c:choose>
+          <c:when test="${order.paid}"><span class="badge badge-success">Đã thanh toán</span></c:when>
+          <c:when test="${order.refunded}"><span class="badge badge-secondary">Đã hoàn tiền</span></c:when>
+          <c:otherwise><span class="badge badge-warning">Chưa thanh toán</span></c:otherwise>
+        </c:choose>
+      </p>
+    </div>
+    <div class="border rounded p-4 mb-4">
+      <h3 class="h6 text-uppercase text-black">Giao đến</h3>
+      <p class="mb-0"><strong><c:out value="${order.shippingAddress.recipientName}"/></strong> ·
+        <c:out value="${order.shippingAddress.phone}"/><br>
+        <span class="text-muted"><c:out value="${order.shippingAddress.fullAddress}"/></span></p>
+    </div>
+    <c:if test="${not empty order.payments}">
+      <div class="border rounded p-4 mb-4">
+        <h3 class="h6 text-uppercase text-black">Lịch sử thanh toán</h3>
+        <ul class="list-unstyled mb-0 small">
+          <c:forEach items="${order.payments}" var="pay">
+            <li class="mb-2">
+              <span class="badge badge-${pay.status.badge}">${pay.status.label}</span>
+              ${f:vnd(pay.amount)} · ${f:dateTime(pay.createdAt)}
+              <c:if test="${not empty pay.transactionNo}"><br><span class="text-muted">Mã GD: <c:out value="${pay.transactionNo}"/></span></c:if>
+            </li>
+          </c:forEach>
+        </ul>
+      </div>
+    </c:if>
+  </div>
+</div>

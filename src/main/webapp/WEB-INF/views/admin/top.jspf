@@ -1,0 +1,51 @@
+<%-- Khung trang khu quản lý (nhân viên & quản trị). Biến: pageTitle, adminNav --%>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title><c:out value="${pageTitle}"/> &mdash; Quản lý Shoppers</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+  <link rel="stylesheet" href="${ctx}/fonts/icomoon/style.css">
+  <link rel="stylesheet" href="${ctx}/css/bootstrap.min.css">
+  <link rel="stylesheet" href="${ctx}/css/shop.css">
+  <style>body { font-family: 'Mukta', sans-serif; }</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <aside class="admin-sidebar">
+    <a href="${ctx}/staff" class="brand">SHOPPERS <small class="d-block text-muted" style="font-size: 12px;">Khu quản lý</small></a>
+    <div class="nav-section">Bán hàng</div>
+    <nav class="nav flex-column">
+      <a class="nav-link ${adminNav == 'dashboard' ? 'active' : ''}" href="${ctx}/staff">Tổng quan</a>
+      <a class="nav-link ${adminNav == 'orders' ? 'active' : ''}" href="${ctx}/staff/orders">Đơn hàng</a>
+    </nav>
+    <c:if test="${auth.admin}">
+      <div class="nav-section">Quản trị</div>
+      <nav class="nav flex-column">
+        <a class="nav-link ${adminNav == 'products' ? 'active' : ''}" href="${ctx}/admin/products">Sản phẩm</a>
+        <a class="nav-link ${adminNav == 'categories' ? 'active' : ''}" href="${ctx}/admin/categories">Danh mục</a>
+        <a class="nav-link ${adminNav == 'promotions' ? 'active' : ''}" href="${ctx}/admin/promotions">Khuyến mãi</a>
+        <a class="nav-link ${adminNav == 'vouchers' ? 'active' : ''}" href="${ctx}/admin/vouchers">Voucher</a>
+        <a class="nav-link ${adminNav == 'users' ? 'active' : ''}" href="${ctx}/admin/users">Tài khoản</a>
+      </nav>
+    </c:if>
+    <div class="nav-section">Cá nhân</div>
+    <nav class="nav flex-column">
+      <a class="nav-link ${adminNav == 'profile' ? 'active' : ''}" href="${ctx}/staff/profile">
+        <c:out value="${auth.fullName}"/> <small>(${auth.admin ? 'ADMIN' : 'STAFF'})</small></a>
+      <a class="nav-link" href="${ctx}/" target="_blank">Xem cửa hàng ↗</a>
+      <form action="${ctx}/logout" method="post" class="m-0">
+        <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+        <button type="submit" class="nav-link btn btn-link text-left w-100">Đăng xuất</button>
+      </form>
+    </nav>
+  </aside>
+  <main class="admin-main">
+    <c:if test="${not empty sessionScope.flash}">
+      <div class="alert alert-${sessionScope.flash.type} alert-dismissible fade show" role="alert">
+        <c:out value="${sessionScope.flash.message}"/>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <c:remove var="flash" scope="session"/>
+    </c:if>

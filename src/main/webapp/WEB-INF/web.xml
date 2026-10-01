@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Clothing Shop E-commerce</display-name>
+
+    <!-- ===== Filters (thứ tự khai báo = thứ tự thực thi) ===== -->
+    <filter>
+        <filter-name>requestContext</filter-name>
+        <filter-class>com.shop.web.filter.RequestContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>requestContext</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>csrf</filter-name>
+        <filter-class>com.shop.web.filter.CsrfFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>csrf</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Khu vực của khách hàng -->
+    <filter>
+        <filter-name>customerArea</filter-name>
+        <filter-class>com.shop.web.filter.AccessFilter</filter-class>
+        <init-param>
+            <param-name>require</param-name>
+            <param-value>customer</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>customerArea</filter-name>
+        <url-pattern>/account/*</url-pattern>
+        <url-pattern>/cart</url-pattern>
+        <url-pattern>/cart/*</url-pattern>
+        <url-pattern>/wishlist</url-pattern>
+        <url-pattern>/wishlist/*</url-pattern>
+        <url-pattern>/checkout</url-pattern>
+        <url-pattern>/checkout/*</url-pattern>
+        <url-pattern>/orders</url-pattern>
+        <url-pattern>/orders/*</url-pattern>
+        <url-pattern>/reviews/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Khu vực nhân viên (STAFF và ADMIN) -->
+    <filter>
+        <filter-name>staffArea</filter-name>
+        <filter-class>com.shop.web.filter.AccessFilter</filter-class>
+        <init-param>
+            <param-name>require</param-name>
+            <param-value>staff</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>staffArea</filter-name>
+        <url-pattern>/staff/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Khu vực quản trị (chỉ ADMIN) -->
+    <filter>
+        <filter-name>adminArea</filter-name>
+        <filter-class>com.shop.web.filter.AccessFilter</filter-class>
+        <init-param>
+            <param-name>require</param-name>
+            <param-value>admin</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>adminArea</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ===== JSP ===== -->
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <include-prelude>/WEB-INF/views/common/taglibs.jspf</include-prelude>
+            <trim-directive-whitespaces>true</trim-directive-whitespaces>
+        </jsp-property-group>
+        <!-- Các đoạn include tĩnh (header, footer...) cũng phải đọc bằng UTF-8 -->
+        <jsp-property-group>
+            <url-pattern>*.jspf</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- ===== Trang lỗi ===== -->
+    <error-page>
+        <exception-type>com.shop.model.DomainException</exception-type>
+        <location>/WEB-INF/views/error/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/error/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/error.jsp</location>
+    </error-page>
+</web-app>

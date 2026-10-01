@@ -1,0 +1,28 @@
+<%-- Cách tính giảm (DiscountPolicy) + thời gian hiệu lực (Period) dùng chung cho khuyến mãi và voucher --%>
+<div class="form-row">
+  <div class="form-group col-md-4">
+    <label for="policyType">Cách giảm</label>
+    <select class="form-control js-policy-type" id="policyType" name="policyType">
+      <option value="PERCENT">Theo phần trăm</option>
+      <option value="FIXED">Số tiền cố định</option>
+    </select>
+  </div>
+  <div class="form-group col-md-4">
+    <label class="form-required" for="policyValue">Mức giảm (% hoặc ₫)</label>
+    <input class="form-control" id="policyValue" name="policyValue" required placeholder="10 hoặc 30000">
+  </div>
+  <div class="form-group col-md-4 js-max-discount">
+    <label for="maxDiscount">Giảm tối đa (₫)</label>
+    <input class="form-control" id="maxDiscount" name="maxDiscount" placeholder="Không giới hạn">
+  </div>
+</div>
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <label class="form-required" for="start">Bắt đầu</label>
+    <input type="datetime-local" class="form-control" id="start" name="start" required value="${f:isoDateTime(now)}">
+  </div>
+  <div class="form-group col-md-6">
+    <label class="form-required" for="end">Kết thúc</label>
+    <input type="datetime-local" class="form-control" id="end" name="end" required value="${f:isoDateTime(now.plusDays(30))}">
+  </div>
+</div>
