@@ -41,9 +41,10 @@ public final class Jdbc {
         }
     }
 
+    /** Dòng đầu tiên; rỗng nếu không có dòng nào hoặc giá trị ánh xạ là NULL (ví dụ cột khoá ngoại để trống). */
     public static <T> Optional<T> one(String sql, RowMapper<T> mapper, Object... params) {
         List<T> rows = query(sql, mapper, params);
-        return rows.isEmpty() ? Optional.empty() : Optional.of(rows.get(0));
+        return rows.isEmpty() ? Optional.empty() : Optional.ofNullable(rows.get(0));
     }
 
     public static long count(String sql, Object... params) {
